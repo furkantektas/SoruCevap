@@ -3,6 +3,7 @@ package tr.edu.gtu.bilmuh.sorucevap;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,9 +13,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.skor) TextView skor;
     @Bind(R.id.soru) TextView soru;
 
+    @Bind(R.id.countdown) TextView countDown;
+
     @OnClick(R.id.cevap1) void onCevap1(View v) {
         onSubmit(v);
     }
@@ -40,6 +46,19 @@ public class MainActivity extends AppCompatActivity {
         onSubmit(v);
     }
 
+    CountDownTimer timer = new CountDownTimer(30*1000,1000) {
+        @Override
+        public void onTick(long millisUntilFinished) {
+            String countDownText = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished));
+            countDown.setText(countDownText);
+        }
+
+        @Override
+        public void onFinish() {
+            finalizeGame();
+        }
+    };
 
     private int currentSkor = 0;
     private int nextSoru = 0;
@@ -79,19 +98,18 @@ public class MainActivity extends AppCompatActivity {
         service.listSorular().enqueue(new Callback<Sorular>() {
             @Override
             public void onResponse(Call<Sorular> call, Response<Sorular> response) {
-                if(response.isSuccess()) {
+                if (response.isSuccess()) {
                     sorular = response.body();
                     fillQuestion();
+                    timer.start();
                 }
-
             }
 
             @Override
             public void onFailure(Call<Sorular> call, Throwable t) {
-                Log.i("FAIL",t.getMessage());
+                Log.i("FAIL", t.getMessage());
             }
         });
-
     }
 
     private void setSkor(int skor) {
@@ -116,11 +134,15 @@ public class MainActivity extends AppCompatActivity {
 
             ++nextSoru;
         } else {
-            Toast.makeText(MainActivity.this, "Skorunuz: "+currentSkor, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this,SkorActivity.class);
-            intent.putExtra(SkorActivity.SCOR_KEY,currentSkor);
-            startActivity(intent);
+            finalizeGame();
         }
+    }
+
+    private void finalizeGame() {
+        Toast.makeText(MainActivity.this, "Skorunuz: "+currentSkor, Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this,SkorActivity.class);
+        intent.putExtra(SkorActivity.SCOR_KEY,currentSkor);
+        startActivity(intent);
     }
 
 }

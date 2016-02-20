@@ -14,15 +14,55 @@
     android:weightSum="7">
 
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="50"
-        android:id="@+id/skor"
         android:layout_weight="1"
-        android:layout_gravity="center_vertical|right"
-        android:gravity="center" />
+        android:weightSum="4">
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:weightSum="2">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/imageView"
+                android:layout_weight="1"
+                android:src="@drawable/ic_alarm_white_24dp"
+                android:layout_gravity="center_vertical|right"
+                android:scaleType="center"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/countdown"
+                android:paddingRight="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="00:30"
+                android:id="@+id/countdown"
+                android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="50"
+            android:id="@+id/skor"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical|right"
+            android:gravity="center" />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -60,5 +100,6 @@
             android:layout_weight="1"
             android:background="#0D47A1" />
     </LinearLayout>
+
 </LinearLayout>
 
