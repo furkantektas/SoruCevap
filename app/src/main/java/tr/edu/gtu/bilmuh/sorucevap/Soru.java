@@ -1,10 +1,15 @@
 package tr.edu.gtu.bilmuh.sorucevap;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Furkan Tektas on 2/13/16.
  */
 public class Soru {
+
+    @SerializedName("soru")
     private String metin;
+
     private String dogruCevap;
     private String yanlisCevap;
 

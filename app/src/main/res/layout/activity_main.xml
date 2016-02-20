@@ -29,7 +29,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:text="13 x 2"
+        android:text="Ankara hangi ulkenin baskentidir?"
         android:id="@+id/soru"
         android:layout_gravity="center_horizontal"
         android:layout_weight="4"
@@ -37,7 +37,7 @@
         android:textColor="#ffffff"
         android:textAlignment="center"
         android:gravity="center"
-        android:textSize="60sp" />
+        android:textSize="20sp" />
 
     <LinearLayout
         android:orientation="horizontal"

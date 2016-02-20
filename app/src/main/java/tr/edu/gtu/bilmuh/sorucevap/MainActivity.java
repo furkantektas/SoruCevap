@@ -3,27 +3,63 @@ package tr.edu.gtu.bilmuh.sorucevap;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends Activity {
 
-    @Bind(R.id.cevap1) Button dogruCevap;
-    @Bind(R.id.cevap2) Button yanlisCevap;
+    @Bind(R.id.cevap1) Button cevap1;
+    @Bind(R.id.cevap2) Button cevap2;
     @Bind(R.id.skor) TextView skor;
     @Bind(R.id.soru) TextView soru;
 
-    private int currentSkor = 0;
+    @OnClick(R.id.cevap1) void onCevap1(View v) {
+        onSubmit(v);
+    }
 
-    private List<Soru> sorular = new ArrayList<>();
+    @OnClick(R.id.cevap2) void onCevap2(View v) {
+        onSubmit(v);
+    }
+
+
+    private int currentSkor = 0;
+    private int nextSoru = 0;
+
+    private Sorular sorular = new Sorular();
+
+
+    public void onSubmit(View v) {
+        Button button = (Button) v;
+        String buttonText = String.valueOf(button.getText());
+        Soru soru = sorular.getSorular().get(nextSoru - 1);
+
+        // dogru
+        if(buttonText.equals(soru.getDogruCevap())) {
+            setSkor(currentSkor + 5);
+        }
+
+        fillQuestion();
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,32 +69,28 @@ public class MainActivity extends Activity {
 
         setSkor(currentSkor);
 
-        sorular.add(new Soru("13 x 2", "26", "36"));
-        sorular.add(new Soru("9 x 5",    "45",   "40"));
-        sorular.add(new Soru("120 - 30", "90",   "80"));
-        sorular.add(new Soru("100 / 10", "10",   "20"));
-        sorular.add(new Soru("45 x 5",   "225",  "235"));
-        sorular.add(new Soru("10 x 20",  "200",  "100"));
-        sorular.add(new Soru("20 x 4",   "80",   "90"));
-        sorular.add(new Soru("5 - 20",   "-15",  "-20"));
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://sorucevap.firebaseio-demo.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-
-        dogruCevap.setOnClickListener(new View.OnClickListener() {
+        SoruService service = retrofit.create(SoruService.class);
+        service.listSorular().enqueue(new Callback<Sorular>() {
             @Override
-            public void onClick(View v) {
-                setSkor(currentSkor + 5);
-                fillQuestion();
+            public void onResponse(Call<Sorular> call, Response<Sorular> response) {
+                if(response.isSuccess()) {
+                    sorular = response.body();
+                    fillQuestion();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Sorular> call, Throwable t) {
+                Log.i("FAIL",t.getMessage());
             }
         });
 
-        yanlisCevap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fillQuestion();
-            }
-        });
-
-        fillQuestion();
     }
 
     private void setSkor(int skor) {
@@ -66,15 +98,22 @@ public class MainActivity extends Activity {
         this.skor.setText(String.valueOf(currentSkor));
     }
 
-    private int currentSoru = 0;
 
     private void fillQuestion() {
-        if(currentSoru < sorular.size()) {
-            Soru currSoru = sorular.get(currentSoru);
+        if(nextSoru < sorular.getSorular().size()) {
+            Soru currSoru = sorular.getSorular().get(nextSoru);
             soru.setText(currSoru.getMetin());
-            dogruCevap.setText(currSoru.getDogruCevap());
-            yanlisCevap.setText(currSoru.getYanlisCevap());
-            ++currentSoru;
+
+            Random r = new Random();
+            if(r.nextBoolean()) {
+                cevap1.setText(currSoru.getDogruCevap());
+                cevap2.setText(currSoru.getYanlisCevap());
+            } else {
+                cevap1.setText(currSoru.getYanlisCevap());
+                cevap2.setText(currSoru.getDogruCevap());
+            }
+
+            ++nextSoru;
         } else {
             Toast.makeText(MainActivity.this, "Skorunuz: "+currentSkor, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this,SkorActivity.class);
