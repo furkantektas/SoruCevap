@@ -2,12 +2,13 @@ package tr.edu.gtu.bilmuh.sorucevap;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SkorActivity extends Activity {
+public class SkorActivity extends AppCompatActivity {
     public static final String SCOR_KEY = "skor";
 
     @Bind(R.id.skor) TextView skor;
