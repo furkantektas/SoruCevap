@@ -1,6 +1,7 @@
 package tr.edu.gtu.bilmuh.sorucevap;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,12 +11,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class MainActivity extends Activity {
 
-    private Button dogruCevap;
-    private Button yanlisCevap;
-    private TextView skor;
-    private TextView soru;
+    @Bind(R.id.cevap1) Button dogruCevap;
+    @Bind(R.id.cevap2) Button yanlisCevap;
+    @Bind(R.id.skor) TextView skor;
+    @Bind(R.id.soru) TextView soru;
 
     private int currentSkor = 0;
 
@@ -25,10 +29,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        skor = (TextView) findViewById(R.id.skor);
-        soru = (TextView) findViewById(R.id.soru);
-        dogruCevap = (Button) findViewById(R.id.cevap1);
-        yanlisCevap = (Button) findViewById(R.id.cevap2);
+        ButterKnife.bind(this);
 
         setSkor(currentSkor);
 
@@ -76,6 +77,9 @@ public class MainActivity extends Activity {
             ++currentSoru;
         } else {
             Toast.makeText(MainActivity.this, "Skorunuz: "+currentSkor, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this,SkorActivity.class);
+            intent.putExtra(SkorActivity.SCOR_KEY,currentSkor);
+            startActivity(intent);
         }
     }
 
