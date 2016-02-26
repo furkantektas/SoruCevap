@@ -1,6 +1,5 @@
 package tr.edu.gtu.bilmuh.sorucevap;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -11,9 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onTick(long millisUntilFinished) {
             String countDownText = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
-                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished));
+                    TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished));
             countDown.setText(countDownText);
         }
 
@@ -63,13 +59,13 @@ public class MainActivity extends AppCompatActivity {
     private int currentSkor = 0;
     private int nextSoru = 0;
 
-    private Sorular sorular = new Sorular();
+    private List<Soru> sorular = new ArrayList<>();
 
 
     public void onSubmit(View v) {
         Button button = (Button) v;
         String buttonText = String.valueOf(button.getText());
-        Soru soru = sorular.getSorular().get(nextSoru - 1);
+        Soru soru = sorular.get(nextSoru - 1);
 
         // dogru
         if(buttonText.equals(soru.getDogruCevap())) {
@@ -95,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         SoruService service = retrofit.create(SoruService.class);
-        service.listSorular().enqueue(new Callback<Sorular>() {
+        service.listSorular().enqueue(new Callback<List<Soru>>() {
             @Override
-            public void onResponse(Call<Sorular> call, Response<Sorular> response) {
+            public void onResponse(Call<List<Soru>> call, Response<List<Soru>> response) {
                 if (response.isSuccess()) {
                     sorular = response.body();
                     fillQuestion();
@@ -106,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Sorular> call, Throwable t) {
+            public void onFailure(Call<List<Soru>> call, Throwable t) {
                 Log.i("FAIL", t.getMessage());
             }
         });
@@ -119,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void fillQuestion() {
-        if(nextSoru < sorular.getSorular().size()) {
-            Soru currSoru = sorular.getSorular().get(nextSoru);
+        if(nextSoru < sorular.size()) {
+            Soru currSoru = sorular.get(nextSoru);
             soru.setText(currSoru.getMetin());
 
             Random r = new Random();

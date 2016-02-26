@@ -1,7 +1,6 @@
 package tr.edu.gtu.bilmuh.sorucevap;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 

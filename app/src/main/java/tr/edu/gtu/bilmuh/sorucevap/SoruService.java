@@ -10,5 +10,5 @@ import retrofit2.http.GET;
  */
 public interface SoruService {
     @GET("sorular.json")
-    Call<Sorular> listSorular();
+    Call<List<Soru>> listSorular();
 }
