@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.activeandroid.query.Select;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +19,12 @@ import java.util.List;
  * Created by sunum on 2/27/16.
  */
 public class SkorAdapter extends BaseAdapter{
-    private List<Skor> skorlar = new ArrayList<>();
+    private List<Skor> skorlar;
     private Activity activity;
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yy HH:mm");
     public SkorAdapter(Activity activity) {
         this.activity = activity;
-        skorlar.add(new Skor(128));
-        skorlar.add(new Skor(18));
-        skorlar.add(new Skor(12));
-        skorlar.add(new Skor(1));
-        skorlar.add(new Skor(189));
+        skorlar = new Select().from(Skor.class).orderBy("skor DESC").limit(5).execute();
     }
 
     @Override
